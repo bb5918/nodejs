@@ -1,0 +1,24 @@
+{
+  "name": "camp-18",
+  "version": "1.0.0",
+  "description": "쇼핑몰",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon -e js,html app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "쇼핑몰"
+  ],
+  "author": "이은비",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.2.5",
+    "nodemon": "^2.0.6",
+    "nunjucks": "^3.2.2",
+    "sequelize": "^4.42.0"
+  }
+}
