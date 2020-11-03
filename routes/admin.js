@@ -24,13 +24,9 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-//csrf 셋팅
+// csrf 셋팅
 const csrf = require("csurf");
 const csrfProtection = csrf({ cookie: true });
-
-router.get("/", (req, res) => {
-  res.send("admin app2");
-});
 
 router.get("/products", async (_, res) => {
   try {
@@ -65,7 +61,16 @@ router.get("/products/detail/:id", async (req, res) => {
       },
       include: ["Memo"],
     });
+
+    // const product = await models.Products.findByPk(req.params.id);
     res.render("admin/detail.html", { product });
+  } catch (e) {}
+});
+
+router.get("/products/edit/:id", csrfProtection, async (req, res) => {
+  try {
+    const product = await models.Products.findByPk(req.params.id);
+    res.render("admin/form.html", { product, csrfToken: req.csrfToken() });
   } catch (e) {}
 });
 
@@ -77,7 +82,6 @@ router.post(
     try {
       // 이전에 저장되어있는 파일명을 받아오기 위함
       const product = await models.Products.findByPk(req.params.id);
-
       if (req.file && product.thumbnail) {
         //요청중에 파일이 존재 할시 이전이미지 지운다.
         fs.unlinkSync(uploadDir + "/" + product.thumbnail);
@@ -93,15 +97,6 @@ router.post(
     } catch (e) {}
   }
 );
-
-router.post("/products/edit/:id", csrfProtection, async (req, res) => {
-  try {
-    await models.Products.update(req.body, {
-      where: { id: req.params.id },
-    });
-    res.redirect("/admin/products/detail/" + req.params.id);
-  } catch (e) {}
-});
 
 router.get("/products/delete/:id", async (req, res) => {
   try {
@@ -125,6 +120,7 @@ router.post("/products/detail/:id", async (req, res) => {
     console.log(e);
   }
 });
+
 router.get("/products/delete/:product_id/:memo_id", async (req, res) => {
   try {
     await models.ProductsMemo.destroy({
@@ -135,4 +131,5 @@ router.get("/products/delete/:product_id/:memo_id", async (req, res) => {
     res.redirect("/admin/products/detail/" + req.params.product_id);
   } catch (e) {}
 });
+
 module.exports = router;
